@@ -77,7 +77,7 @@ let s:plugin_path = s:install_dir . "/jslint/"
 if has('win32')
   let s:plugin_path = substitute(s:plugin_path, '/', '\', 'g')
 endif
-let s:cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "runjslint." . s:runjslint_ext
+let s:jshintcmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "runjslint." . s:runjslint_ext
 
 let s:jshintrc_file = expand('~/.jshintrc')
 if filereadable(s:jshintrc_file)
@@ -86,6 +86,18 @@ else
   let s:jshintrc = []
 end
 
+" transform the content of the .jshintrc to a comment config in case it is a
+" JSON object
+if get(s:jshintrc, 0) !~ '\/\*js[lh]int'
+  let s:jshintrc_str = join(s:jshintrc)
+
+  let s:jshint_transform_cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "transform.js"
+  let s:jshint_transform = system(s:jshint_transform_cmd, s:jshintrc_str)
+  " make sure there are no newlines in the script as else the line cunt will be wrong
+  let s:jshint_transform = substitute(s:jshint_transform, "\n", "", "g")
+  " set the new jshintrc config
+  let s:jshintrc = [s:jshint_transform]
+endif
 
 " WideMsg() prints [long] message up to (&columns-1) length
 " guaranteed without "Press Enter" prompt.
@@ -151,7 +163,7 @@ function! s:JSLint()
   if len(lines) == 0
     return
   endif
-  let b:jslint_output = system(s:cmd, lines . "\n")
+  let b:jslint_output = system(s:jshintcmd, lines . "\n")
   if v:shell_error
     echoerr 'could not invoke JSLint!'
     let b:jslint_disabled = 1
