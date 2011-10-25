@@ -68,6 +68,9 @@ var readSTDIN = (function() {
 
 readSTDIN(function(body) {
   var config, globals, glob, conf, c, i;
+  var comment_matcher = /\/\/.*/g;
+
+  body = body.replace(comment_matcher, '');     // Strip single-line comments from .jslintrc contents
   config = JSON.parse(body);
   globals = config.predef;
   i = globals.length;
