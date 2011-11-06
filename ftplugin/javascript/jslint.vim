@@ -81,15 +81,17 @@ let s:jshintcmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path .
 
 let s:jshintrc_file = expand('~/.jshintrc')
 if filereadable(s:jshintrc_file)
-  let s:jshintrc = readfile(s:jshintrc_file)
+  let s:jshintrc_lines = readfile(s:jshintrc_file)
 else
-  let s:jshintrc = []
+  let s:jshintrc_lines = []
 end
 
 " transform the content of the .jshintrc to a comment config in case it is a
 " JSON object
-if get(s:jshintrc, 0) !~ '\/\*js[lh]int'
-  let s:jshintrc_str = join(s:jshintrc)
+if get(s:jshintrc_lines, 0) !~ '\/\*js[lh]int'
+  " Strip single-line comments from each line of the jshintrc file:
+  let s:jshintrc_lines = map(copy(s:jshintrc_lines), "substitute(v:val, '\/\/.*', '', 'g')")
+  let s:jshintrc_str = join(s:jshintrc_lines)
 
   let s:jshint_transform_cmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "transform.js"
   let s:jshint_transform = system(s:jshint_transform_cmd, s:jshintrc_str)
