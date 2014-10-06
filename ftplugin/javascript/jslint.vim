@@ -6,7 +6,11 @@
 " To disable the highlighting put the line
 " let g:JSLintHighlightErrorLine = 0
 " in your .vimrc
+" To override the default ~/.jshintrc location, put
+" let g:local_jshintrc = "/my/path"
+" in your .vimrc or .lvimrc
 "
+
 if exists("b:did_jslint_plugin")
   finish
 else
@@ -79,7 +83,15 @@ if has('win32')
 endif
 let s:jshintcmd = "cd " . s:plugin_path . " && " . s:cmd . " " . s:plugin_path . "runjslint." . s:runjslint_ext
 
-let s:jshintrc_file = expand('~/.jshintrc')
+let s:local_jshintrc = '~/.jshintrc'
+if exists("g:local_jshintrc")
+  echo "g:local_jshintrc: " . g:local_jshintrc
+  let s:jshintrc_file = expand(g:local_jshintrc)
+  if filereadable(s:jshintrc_file)
+    let s:local_jshintrc = g:local_jshintrc
+  end
+end
+let s:jshintrc_file = expand(s:local_jshintrc)
 if filereadable(s:jshintrc_file)
   let s:jshintrc_lines = readfile(s:jshintrc_file)
 else
