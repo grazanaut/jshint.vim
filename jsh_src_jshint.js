@@ -3699,40 +3699,23 @@ var JSHINT = (function () {
     if (!state.option.nativepromises) {
       warning("W102", state.tokens.curr, "async");
     }
-    if (state.tokens.next.value === "function") {
-      this.right = expression(150);
-      this.arity = "unary";
+    if (state.tokens.next.value !== "function") {
+      error("E038", state.tokens.curr, "async");
+    }
+    this.right = expression(150);
+    this.arity = "unary";
+    //E038
+
       return this;
-    }
-    if (state.tokens.next.value === "(") { //in case its a fat-arrow function
-      warning("I004", state.tokens.curr, "found open parenthesis");
-      var i = 0;
-      var tok = peek(0);
-      while (tok) {
-        if (tok.value === "(") { //dont allow nested parentheses
-      warning("I004", state.tokens.curr, "internal open parenthesis - error");
-          break;
-        }
-        if (tok.value === ")") { //we look at the next value now
-      warning("I004", state.tokens.curr, "found closed parenthesis");
-          tok = peek(i+1);
-          if (tok && tok.value === "=>") { //found it!!
-      warning("I004", state.tokens.curr, "found fat arrow!");
-            this.right = expression(150);
-            this.arity = "unary";
-            return this;
-          }
-          break; //closed parentheses and no fat arrow - fail!
-        }
-
-        i++;
-        tok = peek(i);
-      }
-    }
-
-    error("E038", state.tokens.curr, "async"); //if we get this far, we didn't succeed
-    return this;
-
+    //var asyncfunc = false;
+    //if (state.tokens.next.value === "function") {
+      //warning("W102", state.tokens.curr, "PFG");
+      //warning("W102", state.tokens.curr, state.tokens.curr.value);
+      //asyncfunc = true;
+      //advance("function");
+      //warning("W102", state.tokens.curr, state.tokens.curr.value);
+    //}
+    //return this;
   }).exps = true;
 
   blockstmt("if", function () {

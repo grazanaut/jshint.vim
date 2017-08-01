@@ -53,7 +53,7 @@ var errors = {
   E035: "Missing property name.",
   E036: "Expected to see a statement and instead saw a block.",
   E037: null,
-  E038: "`async` must be followed by a function definition, eg `async function` or `async (x) => ..`", //PFG was null
+  E038: null,
   E039: "Function declarations are not invocable. Wrap the whole function invocation in parens.",
   E040: "Each value should have its own case label.",
   E041: "Unrecoverable syntax error.",
@@ -203,8 +203,7 @@ var warnings = {
 var info = {
   I001: "Comma warnings can be turned off with 'laxcomma'.",
   I002: null,
-  I003: "ES5 option is now set per default",
-  I004: "JSHint Debug Message: {a}" //Added by pfg
+  I003: "ES5 option is now set per default"
 };
 
 exports.errors = {};
